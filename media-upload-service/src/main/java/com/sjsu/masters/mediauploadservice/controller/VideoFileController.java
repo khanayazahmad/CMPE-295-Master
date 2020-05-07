@@ -23,4 +23,9 @@ public class VideoFileController {
     public List<VideoMetadata> uploadMultipleFiles(@ModelAttribute VideoUploadRequest request) {
         return videoFileService.uploadMultipleFiles(request);
     }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/stream/api")
+    public String getVideoStreamEndpoint(){
+       return videoFileService.getVideoStreamingAPIEndpoint();
+    }
 }
