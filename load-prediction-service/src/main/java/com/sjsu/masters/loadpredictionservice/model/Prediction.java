@@ -2,17 +2,17 @@ package com.sjsu.masters.loadpredictionservice.model;
 
 public class Prediction {
     private Integer microserviceId;
-    private Integer predictionResult;
+    private Integer LPSresult;
 
     public Prediction(Integer microserviceId, Integer predictionResult){
         this.microserviceId = microserviceId;
-        this.predictionResult = predictionResult;
+        this.LPSresult = predictionResult;
     }
 
     public Integer getMicroserviceId() { return microserviceId; }
     public void setMicroserviceId(Integer microserviceId) { this.microserviceId = microserviceId; }
 
-    public Integer getPredictionResult() { return predictionResult; }
-    public void setPredictionResult(Integer predictionResult) { this.predictionResult = predictionResult; }
+    public Integer getPredictionResult() { return LPSresult; }
+    public void setPredictionResult(Integer predictionResult) { this.LPSresult = predictionResult; }
 }
 

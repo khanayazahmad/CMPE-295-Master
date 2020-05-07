@@ -1,8 +1,7 @@
 package com.sjsu.masters.loadpredictionservice.controller;
 
-import com.sjsu.masters.loadpredictionservice.model.LoadPredictionRequest;
-import com.sjsu.masters.loadpredictionservice.model.Prediction;
-import com.sjsu.masters.loadpredictionservice.LoadPredictionService;
+import com.sjsu.masters.loadpredictionservice.model.*;
+import com.sjsu.masters.loadpredictionservice.service.*;
 import com.sjsu.masters.loadpredictionservice.model.UpdateInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +22,13 @@ public class LoadPredictionController {
         this.loadPredictionService = loadPredictionService;
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Prediction> doPrediction(@RequestBody LoadPredictionRequest request) throws IOException {
-        Prediction prediction = loadPredictionService.getPrediction(request);
+    @RequestMapping(method= RequestMethod.GET, value = "/{microserviceId}")
+    public ResponseEntity<Prediction> doPrediction(
+            @PathVariable                  Integer microserviceId,
+            @RequestParam(required = true) Long startTime,
+            @RequestParam(required = true) Long endTime
+    ) throws IOException {
+        Prediction prediction = loadPredictionService.getPrediction(microserviceId, startTime, endTime);
         return ResponseEntity.ok(prediction);
     }
 

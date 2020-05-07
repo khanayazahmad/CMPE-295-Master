@@ -2,19 +2,22 @@ package com.sjsu.masters.loadpredictionservice.model;
 
 public class LoadPredictionRequest {
     private Integer microserviceId;
-    private Long timestamp;
+    private Long startTime;
+    private Long endTime;
 
-    public LoadPredictionRequest(Integer microserviceId, Long timestamp) {
+    public LoadPredictionRequest(Integer microserviceId, Long startTime, Long endTime) {
         this.microserviceId = microserviceId;
-        this.timestamp = timestamp;
+        this.startTime = startTime;
+        this.endTime = endTime;
 
     }
 
     public Integer getMicroserviceId() { return microserviceId; }
-
     public void setMicroserviceId(Integer microserviceId) { this.microserviceId = microserviceId; }
 
-    public Long getTimestamp() { return timestamp; }
+    public Long getStartTime() { return startTime; }
+    public void setStartTime(Long timestamp) { this.startTime = startTime; }
 
-    public void setTimestamp(Long timestamp) { this.timestamp = timestamp; }
+    public Long getEndTime() { return endTime; }
+    public void setEndTime(Long endTime) { this.endTime = endTime; }
 }

@@ -6,7 +6,6 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 stderr = sys.stderr
 sys.stderr = open(os.devnull, 'w')
-import requests 
 import numpy as np
 import random
 import time
