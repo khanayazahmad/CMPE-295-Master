@@ -1,10 +1,10 @@
-package com.example.webservice.service;
+package com.sjsu.masters.webservice.service;
 
 
-import com.example.webservice.contract.AuthResponse;
-import com.example.webservice.contract.ErrorResponse;
-import com.example.webservice.dao.UserDao;
-import com.example.webservice.model.User;
+import com.sjsu.masters.webservice.contract.AuthResponse;
+import com.sjsu.masters.webservice.contract.ErrorResponse;
+import com.sjsu.masters.webservice.dao.UserDao;
+import com.sjsu.masters.webservice.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

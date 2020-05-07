@@ -1,6 +1,6 @@
-package com.example.webservice.dao;
+package com.sjsu.masters.webservice.dao;
 
-import com.example.webservice.model.User;
+import com.sjsu.masters.webservice.model.User;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 

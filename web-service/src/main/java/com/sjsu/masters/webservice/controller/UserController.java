@@ -1,4 +1,4 @@
-package com.example.webservice.controller;
+package com.sjsu.masters.webservice.controller;
 
 public class UserController {
 }

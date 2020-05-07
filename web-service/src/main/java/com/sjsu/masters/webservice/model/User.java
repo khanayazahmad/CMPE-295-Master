@@ -1,4 +1,4 @@
-package com.example.webservice.model;
+package com.sjsu.masters.webservice.model;
 import javax.persistence.*;
 
 

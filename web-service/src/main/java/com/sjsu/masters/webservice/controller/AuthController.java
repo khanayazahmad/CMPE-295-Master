@@ -1,7 +1,7 @@
-package com.example.webservice.controller;
+package com.sjsu.masters.webservice.controller;
 
-import com.example.webservice.contract.ErrorResponse;
-import com.example.webservice.service.AuthService;
+import com.sjsu.masters.webservice.contract.ErrorResponse;
+import com.sjsu.masters.webservice.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package com.example.webservice.contract;
+package com.sjsu.masters.webservice.contract;
 
 import org.springframework.stereotype.Component;
 
