@@ -1,0 +1,19 @@
+Pod and Container CPU usage Query:
+sum(rate(container_cpu_usage_seconds_total{namespace="<microservice-name>"}[5m]))/sum(machine_cpu_cores)*100
+Pod and Container memory usage:
+
+Memory Usage per microservice Query:
+sum(container_memory_working_set_bytes{namespace="<microservice-name>"})/sum(machine_memory_bytes)*100
+
+Cluster Bandwidth Query:
+rate(node_network_transmit_bytes_total[5m])
+
+Cluster Latency Query:
+rate(http_request_duration_microseconds_sum[5m])/rate(http_request_duration_microseconds_count[5m])
+
+Total Requests:
+count(http_requests_total)
+
+Pod Count:
+count(namespace="<microservice-name>"))
+
