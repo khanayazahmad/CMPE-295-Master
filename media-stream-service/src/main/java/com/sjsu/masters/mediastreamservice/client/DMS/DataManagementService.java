@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-@FeignClient(value="data-management-service", fallback = DataManagementServiceImpl.class)
+@FeignClient(value="data-management-service", url="${client.dms.ip}", fallback = DataManagementServiceImpl.class)
 public interface DataManagementService {
 
     @RequestMapping(value="/video-metadata", method= RequestMethod.POST, consumes = "application/json")
