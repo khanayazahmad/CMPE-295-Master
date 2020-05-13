@@ -1,19 +1,19 @@
 package com.sjsu.masters.mediauploadservice.service;
+import com.amazonaws.*;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.*;
+import com.amazonaws.services.s3.transfer.*;
 import com.sjsu.masters.mediauploadservice.client.DMS.*;
 import com.sjsu.masters.mediauploadservice.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.scheduling.annotation.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+import java.util.concurrent.atomic.*;
 
 @Slf4j
 @Service
@@ -27,14 +27,14 @@ public class VideoFileService {
 
     private String MEDIA_STREAM_ENDPOINT = "/video/stream/";
 
-    private AmazonS3 amazonS3Client;
+    private TransferManager transferManager;
 
     private DataManagementService dataManagementService;
 
     @Autowired
-    public VideoFileService(AmazonS3 amazonS3Client, DataManagementService dataManagementService) {
-        this.amazonS3Client = amazonS3Client;
+    public VideoFileService(TransferManager transferManager, DataManagementService dataManagementService) {
         this.dataManagementService = dataManagementService;
+        this.transferManager = transferManager;
     }
 
 
@@ -50,33 +50,69 @@ public class VideoFileService {
 
             request.getVideoFiles().parallelStream().forEach(videoFile -> {
 
-                File file = convertMultiPartFileToFile(videoFile);
-                Long createdAt = System.currentTimeMillis();
-                String uniqueFileName = createdAt+"_"
-                        + request.getOwnerId() + "_"
-                        + videoFile.getOriginalFilename();
 
-                videoMetadataList.add(
-                        getMetadata(
-                                request.getOwnerId(),
-                                request.getTitle(),
-                                videoFile.getSize(),
-                                uniqueFileName,
-                                createdAt
-                        )
-                );
+                try {
+                    InputStream fileInputStream = videoFile.getInputStream();
+                    Long createdAt = System.currentTimeMillis();
+                    String uniqueFileName = createdAt+"_"
+                            + request.getOwnerId() + "_"
+                            + videoFile.getOriginalFilename();
 
-                uploadFileToS3bucket(uniqueFileName, file, S3_BUCKET_NAME);
-                file.delete();
+                    videoMetadataList.add(
+                            getMetadata(
+                                    request.getOwnerId(),
+                                    request.getTitle(),
+                                    videoFile.getSize(),
+                                    uniqueFileName,
+                                    createdAt
+                            )
+                    );
+
+                    uploadFileToS3bucket(uniqueFileName, fileInputStream, videoFile.getSize());
+
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
             });
             dataManagementService.createAll(RequestWrapper.wrap(videoMetadataList));
         }
         return videoMetadataList;
     }
 
-    @Async
-    void uploadFileToS3bucket(String fileName, File file, String bucketName) {
-        amazonS3Client.putObject(new PutObjectRequest(bucketName, fileName, file));
+
+    void uploadFileToS3bucket(String fileName, InputStream in, Long contentLength) throws IOException, InterruptedException {
+
+        try{
+            ObjectMetadata meta = new ObjectMetadata();
+            meta.setContentLength(contentLength);
+            PutObjectRequest request = new PutObjectRequest(S3_BUCKET_NAME, fileName, in, meta);
+            AtomicReference<Long> transferredBytes = new AtomicReference<>(Long.valueOf(0));
+            AtomicReference<Double> percentComplete = new AtomicReference<>(0.0);
+
+            Upload upload = transferManager.upload(request);
+            upload.addProgressListener((com.amazonaws.event.ProgressListener) progressEvent -> {
+
+                if(progressEvent.getBytesTransferred() > 0){
+                    transferredBytes.updateAndGet(v -> v + progressEvent.getBytesTransferred());
+                    double percent = Math.round((transferredBytes.get() * 100.0)/contentLength);
+                    if(percent > 0 && percent%10 == 0 && percent>percentComplete.get()){
+                        log.info("File: " + fileName + "   >>>>>>>>>>>>>>>   "+ transferredBytes.get() + " / " + contentLength
+                                + " bytes transferred   |    percent : " + percent + " %");
+                        percentComplete.set(percent);
+                    }
+
+                }
+
+            });
+
+
+        } catch (AmazonServiceException e) {
+
+            e.printStackTrace();
+        } catch (SdkClientException e) {
+
+            e.printStackTrace();
+        }
 
     }
 

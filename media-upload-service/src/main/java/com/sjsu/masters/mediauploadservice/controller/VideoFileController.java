@@ -4,6 +4,7 @@ import com.sjsu.masters.mediauploadservice.model.*;
 import com.sjsu.masters.mediauploadservice.service.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.*;
 
 import java.util.*;
 
@@ -20,8 +21,8 @@ public class VideoFileController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public List<VideoMetadata> uploadMultipleFiles(@ModelAttribute VideoUploadRequest request) {
-        return videoFileService.uploadMultipleFiles(request);
+    public Mono<List<VideoMetadata>> uploadMultipleFiles(@ModelAttribute VideoUploadRequest request) {
+        return Mono.just(videoFileService.uploadMultipleFiles(request));
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/stream/api")
