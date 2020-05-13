@@ -15,14 +15,18 @@ import java.util.List;
 @Service
 public class LoadPredictionService {
     private List<Metrics> metrics;
+    private List<UpdateInfo> updates;
     private final RestTemplate restTemplate;
-    public LoadPredictionService(RestTemplateBuilder restTemplateBuilder, List<Metrics> metrics){
+
+
+    public LoadPredictionService(RestTemplateBuilder restTemplateBuilder, List<Metrics> metrics, List<UpdateInfo> updates){
         this.restTemplate = restTemplateBuilder.build();
         this.metrics = metrics;
+        this.updates = updates;
     }
 
     public Prediction getPrediction (Integer microserviceId, Long startTime, Long endTime) throws IOException {
-        String url = ("http://ec2-18-214-191-237.compute-1.amazonaws.com:8080/metrics/{microserviceId}?startTime="+String.valueOf(startTime)+"&endTime="+String.valueOf(endTime));
+        String url = ("http://a7fac3082e07246d58f635932018ad79-586489182.us-east-1.elb.amazonaws.com:8802/metrics/{microserviceId}?startTime="+String.valueOf(startTime)+"&endTime="+String.valueOf(endTime));
         metrics = Arrays.asList(this.restTemplate.getForEntity(url, Metrics[].class, microserviceId).getBody());
         Metrics metric = metrics.get(metrics.size() - 1);
         ProcessBuilder loadPrediction = new ProcessBuilder(
@@ -41,9 +45,24 @@ public class LoadPredictionService {
     public String updateModel(UpdateInfo update) throws IOException {
         Integer microserviceId = update.getMicroserviceId();
         Long timestamp = update.getTimestamp();
-        Integer action = update.getAction();
+        String url = ("http://a7fac3082e07246d58f635932018ad79-586489182.us-east-1.elb.amazonaws.com:8802/metrics/{microserviceId}?startTime="+String.valueOf(timestamp)+"&endTime="+String.valueOf(timestamp+1));
+        metrics = Arrays.asList(this.restTemplate.getForEntity(url, Metrics[].class, microserviceId).getBody());
+        Metrics old_state = metrics.get(metrics.size() - 1);
+
+        String url2 = ("http://a7fac3082e07246d58f635932018ad79-586489182.us-east-1.elb.amazonaws.com:8802/metrics/{microserviceId}?startTime="+String.valueOf(timestamp)+"&endTime="+String.valueOf(timestamp+500000));
+        metrics = Arrays.asList(this.restTemplate.getForEntity(url2, Metrics[].class, microserviceId).getBody());
+        Metrics new_state = metrics.get(metrics.size() - 1);
+
+        String url3 = ("http://a7fac3082e07246d58f635932018ad79-586489182.us-east-1.elb.amazonaws.com:8802/predictions/0?startTime="+String.valueOf(timestamp)+"&endTime="+String.valueOf(timestamp+500000));
+        updates = Arrays.asList(this.restTemplate.getForEntity(url3, UpdateInfo[].class).getBody());
+        UpdateInfo updateinfo = updates.get(updates.size() - 1);
         ProcessBuilder modelUpdate = new ProcessBuilder(
-                "python","LoadPrediction_update.py",""+microserviceId,""+timestamp,""+action);
+                "python","LoadPrediction_update.py",
+                ""+old_state.getCpuUsage(),""+old_state.getMemoryUsage(),
+                ""+old_state.getNumberOfPods(),""+old_state.getLatency(),
+                ""+old_state.getBandwidth(),""+new_state.getCpuUsage(),""+new_state.getMemoryUsage(),
+                ""+new_state.getNumberOfPods(),""+new_state.getLatency(),
+                ""+new_state.getBandwidth(),""+updateinfo.getPredictionResult());
         modelUpdate.redirectErrorStream(true);
         Process mu = modelUpdate.start();
         BufferedReader in = new BufferedReader(new InputStreamReader(mu.getInputStream()));

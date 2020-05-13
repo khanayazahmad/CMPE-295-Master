@@ -24,12 +24,6 @@ from collections import deque
 #State - CPU, MEM, #of pods, latency, bandwith (5 metrics)
 class DB_Cluster:
     def __init__(self, cpu, mem, pod, latency, bandwidth):
-        #get_data_from_DB (microserviceid, timestamp)
-        #self.cpu = (random.randint(0,100))
-        #self.mem = (random.randint(0,100))
-        #self.pod = (random.randint(2,10))
-        #self.latency = (random.randint(0, 5000))
-        #self.bandwidth = (random.randint(0,99))
         self.cpu = cpu
         self.mem = mem
         self.pod = pod
@@ -64,15 +58,15 @@ class DB_Cluster:
         mem_scores = 0
         latency_scores = 0
         bandwith_scores = 0
-        pod_scores = 30 - (self.pod * 4)
-        if (self.state[0]) < (95): cpu_scores += 15
-        if (self.state[1]) < (95): mem_scores += 15
-        if (self.state[2]) < 1000:
+        pod_scores = 30 - (self.pod * 4) # Less allocated resources is better but getting overload is the worst.
+        if (self.state[0]) < (95): cpu_scores += 15 #CPU Usage below 95% is good
+        if (self.state[1]) < (95): mem_scores += 15 #Mem Usage below 95% is good
+        if (self.state[2]) < 1000: # Latency below 1000 ms is really good
             latency_scores += 15
-        elif (self.state[2]) < 3000:
+        elif (self.state[2]) < 3000: # Latency below 3000 ms is ok
             latency_scores += 10
-        if (self.state[3]) > 50: bandwith_scores += 15
-        reward = cpu_scores + mem_scores + latency_scores + bandwith_scores 
+        if (self.state[3]) > 50: bandwith_scores += 15 #Available bandwidth > 50 mbps is good
+        reward = cpu_scores + mem_scores + pod_scores + latency_scores + bandwith_scores
         return reward
 
 

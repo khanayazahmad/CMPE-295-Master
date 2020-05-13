@@ -32,11 +32,19 @@ public class LoadPredictionController {
         return ResponseEntity.ok(prediction);
     }
 
+    @RequestMapping(method= RequestMethod.PUT, value = "/updates")
+    public ResponseEntity<String> updateModel(@RequestBody UpdateInfo update) throws IOException {
+        String status = loadPredictionService.updateModel(update);
+        return ResponseEntity.ok(status);
+    }
+
+    /*
     @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity<String> updateModel(@RequestBody UpdateInfo update) throws IOException {
         String status = loadPredictionService.updateModel(update);
         return ResponseEntity.ok(status);
     }
+     */
 
     @RequestMapping(method = RequestMethod.GET)
     public @ResponseBody
