@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: video-streamer-service
+  name: streamer
+  namespace: videostreamer
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: video-streamer-service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: video-streamer-service
+    spec:
+      containers:
+      - image: fjong1/streamer:latest
+        name: streamer
+        ports:
+        - containerPort: 8804

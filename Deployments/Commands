@@ -1,0 +1,22 @@
+kubectl get pods --all-namespaces
+
+kubectl get service --all-namespaces
+
+kubectl describe service --namespace=datamanager
+
+Video Streamer : 
+    kubectl get pods --namespace=videostreamer
+
+Video Uploader : 
+    kubectl get pods --namespace=videouploader
+
+Data Manager : 
+    kubectl get pods --namespace=datamanager
+
+Prometheus forward proxy :
+     kubectl port-forward -n prometheus deploy/prometheus-server 8080:9090
+
+Horizontal Pod AutoScalar : 
+    kubectl apply -f auto-scalar-dms.yaml
+
+kubectl get hpa

@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: video-uploader-service
+  name: uploader
+  namespace: videouploader
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: video-uploader-service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: video-uploader-service
+    spec:
+      containers:
+      - image: azk099/media-upload-service:1.0
+        name: data-management
+        ports:
+        - containerPort: 8806
+        resources:
+          requests:
+            cpu: 100m
+            memory: 1024Mi
+          limits:
+            cpu: 500m
+            memory: 4096Mi
+        args: ["--vm", "1", "--vm-bytes", "1024M", "--vm-hang", "10"]

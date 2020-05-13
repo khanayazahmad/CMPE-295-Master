@@ -1,0 +1,15 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: uploader
+spec:
+  #scaleRef:
+  scaleTargetRef:
+    kind: Deployment
+    name: uploader
+    #subresource: scale
+  minReplicas: 3
+  maxReplicas: 10
+  #cpuUtilization:
+    #targetPercentage: 70
+  targetCPUUtilizationPercentage: 20

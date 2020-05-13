@@ -1,0 +1,15 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: streamer
+spec:
+  #scaleRef:
+  scaleTargetRef:
+    kind: Deployment
+    name: streamer
+    #subresource: scale
+  minReplicas: 3
+  maxReplicas: 10
+  #cpuUtilization:
+    #targetPercentage: 70
+  targetCPUUtilizationPercentage: 25

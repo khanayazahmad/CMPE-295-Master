@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: data-management-service
+  name: dms
+  namespace: datamanager
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: data-management-service
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: data-management-service
+    spec:
+      containers:
+      - image: fjong1/dms:latest
+        name: data-management
+        ports:
+        - containerPort: 8802

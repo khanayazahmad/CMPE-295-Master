@@ -1,0 +1,16 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: dms
+spec:
+  #scaleRef:
+  scaleTargetRef:
+    kind: Deployment
+    name: dms
+    #subresource: scale
+  minReplicas: 3
+  maxReplicas: 10
+  #cpuUtilization:
+    #targetPercentage: 70
+  targetCPUUtilizationPercentage: 50
+
