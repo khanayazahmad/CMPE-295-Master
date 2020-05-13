@@ -8,12 +8,14 @@ import com.sjsu.masters.mediauploadservice.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
+import java.util.stream.*;
 
 @Slf4j
 @Service
@@ -52,6 +54,7 @@ public class VideoFileService {
 
 
                 try {
+                    log.info(videoFile.getName()+ " >>>>>>>>>>>>>>>   " + "Creating InputStream ");
                     InputStream fileInputStream = videoFile.getInputStream();
                     Long createdAt = System.currentTimeMillis();
                     String uniqueFileName = createdAt+"_"
@@ -74,8 +77,20 @@ public class VideoFileService {
                     e.printStackTrace();
                 }
             });
-            dataManagementService.createAll(RequestWrapper.wrap(videoMetadataList));
+
+
+            log.info("Calling data-management-service");
+            ResponseEntity<String> response = dataManagementService.createAll(RequestWrapper.wrap(videoMetadataList));
+            log.info("Received response data-management-service >>>>>>> " +response.toString());
+
+
         }
+
+        log.info("Returning response for server " + videoMetadataList
+                .stream()
+                .map(vm -> vm.toString())
+                .collect(Collectors.toList())
+                .toString());
         return videoMetadataList;
     }
 
@@ -88,7 +103,7 @@ public class VideoFileService {
             PutObjectRequest request = new PutObjectRequest(S3_BUCKET_NAME, fileName, in, meta);
             AtomicReference<Long> transferredBytes = new AtomicReference<>(Long.valueOf(0));
             AtomicReference<Double> percentComplete = new AtomicReference<>(0.0);
-
+            log.info("File: " + fileName + "   >>>>>>>>>>>>>>>   " + "Initiating Upload");
             Upload upload = transferManager.upload(request);
             upload.addProgressListener((com.amazonaws.event.ProgressListener) progressEvent -> {
 

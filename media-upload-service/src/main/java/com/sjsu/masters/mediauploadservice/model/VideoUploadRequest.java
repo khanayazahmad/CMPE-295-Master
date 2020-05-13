@@ -3,6 +3,7 @@ package com.sjsu.masters.mediauploadservice.model;
 import org.springframework.web.multipart.*;
 
 import java.util.*;
+import java.util.stream.*;
 
 public class VideoUploadRequest {
 
@@ -41,5 +42,18 @@ public class VideoUploadRequest {
 
     public void setVideoFiles(List<MultipartFile> videoFiles) {
         this.videoFiles = videoFiles;
+    }
+
+    @Override
+    public String toString() {
+        return "VideoUploadRequest{" +
+                "ownerId='" + ownerId + '\'' +
+                ", title='" + title + '\'' +
+                ", videoFiles=" + videoFiles
+                .stream()
+                .map(file->file.getName())
+                .collect(Collectors.toList())
+                .toString() +
+                '}';
     }
 }
