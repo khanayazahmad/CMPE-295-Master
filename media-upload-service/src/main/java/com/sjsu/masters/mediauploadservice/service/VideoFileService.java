@@ -55,7 +55,11 @@ public class VideoFileService {
 
                 try {
                     log.info(videoFile.getName()+ " >>>>>>>>>>>>>>>   " + "Creating InputStream ");
-                    InputStream fileInputStream = videoFile.getInputStream();
+                    //BufferedInputStream fileInputStream = new BufferedInputStream(videoFile.getInputStream());
+                    int mb = 1024 * 1024;
+
+                    Runtime instance = Runtime.getRuntime();
+                    log.info("2. Used Memory = " + ((instance.totalMemory() - instance.freeMemory()) / mb));
                     Long createdAt = System.currentTimeMillis();
                     String uniqueFileName = createdAt+"_"
                             + request.getOwnerId() + "_"
@@ -71,7 +75,9 @@ public class VideoFileService {
                             )
                     );
 
-                    uploadFileToS3bucket(uniqueFileName, fileInputStream, videoFile.getSize());
+                    uploadFileToS3bucket(uniqueFileName, videoFile, videoFile.getSize());
+
+                    log.info("6. Used Memory = " + ((instance.totalMemory() - instance.freeMemory()) / mb));
 
                 } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
@@ -95,16 +101,22 @@ public class VideoFileService {
     }
 
 
-    void uploadFileToS3bucket(String fileName, InputStream in, Long contentLength) throws IOException, InterruptedException {
+    void uploadFileToS3bucket(String fileName, MultipartFile videoFile, Long contentLength) throws IOException, InterruptedException {
 
         try{
             ObjectMetadata meta = new ObjectMetadata();
             meta.setContentLength(contentLength);
-            PutObjectRequest request = new PutObjectRequest(S3_BUCKET_NAME, fileName, in, meta);
+            int mb = 1024 * 1024;
+
+            Runtime instance = Runtime.getRuntime();
+            log.info("3. Used Memory = " + ((instance.totalMemory() - instance.freeMemory()) / mb));
+            PutObjectRequest request = new PutObjectRequest(S3_BUCKET_NAME, fileName, videoFile.getInputStream(), meta);
             AtomicReference<Long> transferredBytes = new AtomicReference<>(Long.valueOf(0));
             AtomicReference<Double> percentComplete = new AtomicReference<>(0.0);
             log.info("File: " + fileName + "   >>>>>>>>>>>>>>>   " + "Initiating Upload");
+            log.info("4. Used Memory = " + ((instance.totalMemory() - instance.freeMemory()) / mb));
             Upload upload = transferManager.upload(request);
+
             upload.addProgressListener((com.amazonaws.event.ProgressListener) progressEvent -> {
 
                 if(progressEvent.getBytesTransferred() > 0){
@@ -119,6 +131,10 @@ public class VideoFileService {
                 }
 
             });
+
+            
+
+            log.info("5. Used Memory = " + ((instance.totalMemory() - instance.freeMemory()) / mb));
 
 
         } catch (AmazonServiceException e) {
@@ -163,4 +179,5 @@ public class VideoFileService {
         }
         return convertedFile;
     }
+    
 }
