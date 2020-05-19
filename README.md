@@ -12,4 +12,4 @@
 ![Architecture](https://github.com/khanayazahmad/CMPE-295-Master/blob/master/Load_Prediction_Design.png)
 
 ### Project Report
-![Architecture](https://github.com/khanayazahmad/CMPE-295-Master/blob/master/CMPE_295B_Final_Project_Report.pdf)
+[Link](https://github.com/khanayazahmad/CMPE-295-Master/blob/master/CMPE_295B_Final_Project_Report.pdf)
