@@ -3,13 +3,13 @@
 ## Energy Aware Platform as a service for video Streaming
 
 ### Cloud Infrastructure Diagram
-![Architecture](https://github.com/khanayazahmad/CMPE-295-Master/Cloud_Infrastructure.jpg)
+![Architecture](https://github.com/khanayazahmad/CMPE-295-Master/blob/master/Cloud_Infrastructure.jpg)
 
 ### System Architecture Diagram
-![Architecture](https://github.com/khanayazahmad/CMPE-295-Master/System_Architecture.png)
+![Architecture](https://github.com/khanayazahmad/CMPE-295-Master/blob/master/System_Architecture.png)
 
 ### Load Prediction Design Diagram
-![Architecture](https://github.com/khanayazahmad/CMPE-295-Master/Load_Prediction_Design.png)
+![Architecture](https://github.com/khanayazahmad/CMPE-295-Master/blob/master/Load_Prediction_Design.png)
 
 ### Project Report
-![Architecture](https://github.com/khanayazahmad/CMPE-295-Master/LCMPE_295B_Final_Project_Report.pdf)
+![Architecture](https://github.com/khanayazahmad/CMPE-295-Master/blob/master/CMPE_295B_Final_Project_Report.pdf)
